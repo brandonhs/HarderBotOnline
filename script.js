@@ -9,9 +9,6 @@ function sendMessage(message) {
 
   var elem = document.getElementById("messages");
   elem.scrollTop = elem.scrollHeight;
-
-  //cln.getElementsByClassName("timestamp-3ZCmNB")[0].innerText;
-
 }
 
 function reqListener () {
@@ -28,16 +25,30 @@ function reqListener () {
   
   document.getElementsByClassName("avatar-1BDn8e clickable-1bVtEA")[0].src = imageUrl;
   document.getElementsByClassName("username-1A8OIy clickable-1bVtEA")[0].innerText = name;
+
+  var d = new Date();
+  var h = d.getHours();
+  var m = d.getMinutes();
+  var pm = false;
+  if (h >= 12) {
+    pm = true;
+  }
+  if (h == 0) {
+    h = 12;
+  }
+  document.getElementsByClassName("timestamp-3ZCmNB")[0].innerText = "Today at " + h + ":" + m + (pm ? " PM" : " AM");
 }
 
-const url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG9U36DctBZQDoNvJX3AeRQXtOcKAvgnXTPLMkL9O5w8ru1N2I3-E";
+var url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG9U36DctBZQDoNvJX3AeRQXtOcKAvgnXTPLMkL9O5w8ru1N2I3-E";
 
-document.body.onload = function() {
+document.body.onload = begin;
 
-var oReq = new XMLHttpRequest();
-oReq.addEventListener("load", reqListener);
-oReq.open("GET", url);
-oReq.send();
+function begin() {
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", reqListener);
+  oReq.open("GET", url);
+  //oReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  oReq.send();
 }
 
 
@@ -76,10 +87,40 @@ document.getElementById("message_input").addEventListener("keypress", function(e
   }
 });
 
-// document.getElementById("url_input").addEventListener("input", function(){
-//   if (this.innerText.length > 0) {
-//     document.getElementById("placeholder_url").hidden = true;
-//   } else {
-//     document.getElementById("placeholder_url").hidden = false;
-//   }
-// });
+document.getElementById("message_input").onpaste = function(event){
+  var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+  console.log(JSON.stringify(items)); // will give you the mime types
+  var self = this;
+  for (index in items) {
+    var item = items[index];
+    if (item.kind === 'file') {
+      var blob = item.getAsFile();
+      var reader = new FileReader();
+      reader.onload = function(event){
+        var image = new Image();
+        image.src = event.target.result;
+        self.appendChild(image);
+        // console.log(event.target.result);
+      }
+      reader.readAsDataURL(blob);
+    }
+  }
+}
+
+document.getElementById("url_input").addEventListener("input", function(){
+  if (this.innerText.length > 0) {
+    document.getElementById("placeholder_url").hidden = true;
+  } else {
+    document.getElementById("placeholder_url").hidden = false;
+  }
+});
+
+document.getElementById("url_input").addEventListener("keypress", function(e){
+  if (e.keyCode == 13) {
+    e.preventDefault();
+    url = this.innerText;
+    begin();
+    this.innerText = "";
+    document.getElementById("placeholder_url").hidden = false;
+  }
+});
