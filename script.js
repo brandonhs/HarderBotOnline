@@ -36,7 +36,7 @@ function reqListener () {
   if (h == 0) {
     h = 12;
   }
-  document.getElementsByClassName("timestamp-3ZCmNB")[0].innerText = "Today at " + h + ":" + m + (pm ? " PM" : " AM");
+  document.getElementsByClassName("timestamp-3ZCmNB")[0].innerText = "Today at " + h + ":" + m.toString().padStart(2, '0') + (pm ? " PM" : " AM");
 }
 
 var url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG9U36DctBZQDoNvJX3AeRQXtOcKAvgnXTPLMkL9O5w8ru1N2I3-E";
