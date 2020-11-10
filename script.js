@@ -1,7 +1,8 @@
 function sendMessage(message) {
-  var el = document.getElementById("messages").children[document.getElementById("messages").children.length-1];
+  var el = document.getElementById("copy");
   
   var cln = el.cloneNode(true);
+  cln.hidden= false;
   document.getElementById("messages").appendChild(cln);
   var el2 = cln.getElementsByClassName("markup-2BOw-j messageContent-2qWWxC")[0];
   el2.innerText = message;
@@ -31,10 +32,13 @@ function reqListener () {
 
 const url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG9U36DctBZQDoNvJX3AeRQXtOcKAvgnXTPLMkL9O5w8ru1N2I3-E";
 
+document.body.onload = function() {
+
 var oReq = new XMLHttpRequest();
 oReq.addEventListener("load", reqListener);
 oReq.open("GET", url);
 oReq.send();
+}
 
 
 function submit(text) {
