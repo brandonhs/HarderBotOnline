@@ -41,7 +41,7 @@ function reqListener () {
   document.getElementsByClassName("timestamp-3ZCmNB")[0].innerText = "Today at " + h + ":" + m.toString().padStart(2, '0') + (pm ? " PM" : " AM");
 }
 
-var url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG9U36DctBZQDoNvJX3AeRQXtOcKAvgnXTPLMkL9O5w8ru1N2I3-E";
+var url = "https://www.google.com";
 
 document.body.onload = begin;
 
@@ -71,7 +71,7 @@ function submit(text) {
     sendMessage()
   });
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  let postData = { "content": text };
+  let postData = { "content": text, "allowed_mentions": { "users": [], "parse": ["users", "roles", "everyone"], } };
   request.send(JSON.stringify(postData))
 
   sendMessage(text);
