@@ -26,6 +26,8 @@ function reqListener () {
   document.getElementsByClassName("avatar-1BDn8e clickable-1bVtEA")[0].src = imageUrl;
   document.getElementsByClassName("username-1A8OIy clickable-1bVtEA")[0].innerText = name;
 
+  document.title = name;
+
   var d = new Date();
   var h = d.getHours();
   var m = d.getMinutes();
