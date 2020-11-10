@@ -44,6 +44,12 @@ var url = "https://discord.com/api/webhooks/774407441814782054/GZEqSLOGiz3ohLeJG
 document.body.onload = begin;
 
 function begin() {
+  if (!localStorage.url) {
+    localStorage.url = url;
+  }
+
+  url = localStorage.url;
+
   var oReq = new XMLHttpRequest();
   oReq.addEventListener("load", reqListener);
   oReq.open("GET", url);
@@ -119,6 +125,7 @@ document.getElementById("url_input").addEventListener("keypress", function(e){
   if (e.keyCode == 13) {
     e.preventDefault();
     url = this.innerText;
+    localStorage.url = url;
     begin();
     this.innerText = "";
     document.getElementById("placeholder_url").hidden = false;
