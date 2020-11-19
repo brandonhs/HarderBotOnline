@@ -50,6 +50,18 @@ document.body.onload = function() {
 }
 
 function begin(s=undefined) {
+  if (!s) {
+    var f = JSON.parse(localStorage.urls);
+    for (var i = 0; i < f.length; i++) {
+      for (var j = 0; j < f.length; j++) {
+        if (f[j] == f[i] && i != j) {
+          var index = Math.min(i,j);
+          f.splice(index, 1);
+        }
+      }
+    }
+    localStorage.urls = JSON.stringify(f);
+  }
 
   if (localStorage.url) {
     localStorage.clear();
