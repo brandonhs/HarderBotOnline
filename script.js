@@ -1,3 +1,10 @@
+const API_KEY = "2e1f12e2389bc94cf979adea7146d52a"; // maybe don't make this plain text? Nah no one will see this
+
+var img = undefined;
+
+var rel = false;
+
+
 function sendMessage(message) {
   var el = document.getElementById("copy");
 
@@ -25,7 +32,7 @@ function reqListener() {
 
   var s = document.getElementsByClassName("avatar-1BDn8e clickable-1bVtEA");
 
-  s[s.length-1].src = imageUrl;
+  s[s.length - 1].src = imageUrl;
   document.getElementsByClassName("username-1A8OIy clickable-1bVtEA")[0].innerText = name;
 
   document.title = name;
@@ -41,21 +48,24 @@ function reqListener() {
     h = 12;
   }
   document.getElementsByClassName("timestamp-3ZCmNB")[0].innerText = "Today at " + h + ":" + m.toString().padStart(2, '0') + (pm ? " PM" : " AM");
+
+
+  if (rel) location.reload();
 }
 
 var url = "https://www.google.com";
 
-document.body.onload = function() {
+document.body.onload = function () {
   begin();
 }
 
-function begin(s=undefined) {
-  if (!s) {
+function begin(s = undefined) {
+  if (!s && localStorage.urls) {
     var f = JSON.parse(localStorage.urls);
     for (var i = 0; i < f.length; i++) {
       for (var j = 0; j < f.length; j++) {
         if (f[j] == f[i] && i != j) {
-          var index = Math.min(i,j);
+          var index = Math.min(i, j);
           f.splice(index, 1);
         }
       }
@@ -69,24 +79,21 @@ function begin(s=undefined) {
     location.reload();
   }
 
-  if (!localStorage.urls) {
-    localStorage.urls = JSON.stringify([]);
-  }
-
   if (localStorage.urls && !s) {
     var arr = JSON.parse(localStorage.urls);
 
     var el_cont = document.getElementById("url_container");
     var el_copy = document.getElementById("url_copy");
 
-    arr.forEach((v,i) => {
+    arr.forEach((v, i) => {
       var cln = el_copy.cloneNode(true);
       cln.hidden = false;
       cln.id = "urls" + i;
-      cln.onclick = function() {
-        var index = parseInt(this.id[this.id.length-1]);
+      cln.onclick = function () {
+        var index = parseInt(this.id[this.id.length - 1]);
         var a = JSON.parse(localStorage.urls);
         //localStorage.urls = JSON.stringify(a);
+        //rel = true;
         begin(a[index]);
       }
       var oReq = new XMLHttpRequest();
@@ -99,7 +106,7 @@ function begin(s=undefined) {
         var imageUrl = "https://cdn.discordapp.com/avatars/" + id + "/" + avatar + ".webp";
 
         cln.src = imageUrl;
-        
+
         el_cont.appendChild(cln);
       });
       oReq.open("GET", v);
@@ -118,23 +125,58 @@ function begin(s=undefined) {
   oReq.open("GET", url);
   //oReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   oReq.send();
+
+  if (!localStorage.urls) {
+    localStorage.urls = JSON.stringify([]);
+  }
 }
 
 
 function submit(text) {
-  if (text.length <= 0) return;
-  var request = new XMLHttpRequest();
-  request.open("POST", url);
-  request.addEventListener("load", function () {
-    var data = JSON.parse(this.responseText);
-    console.log(data);
+  if (text.length <= 0 && !img) return;
 
-    sendMessage()
-  });
-  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  let postData = { "content": text, "allowed_mentions": { "users": [], "parse": ["users", "roles", "everyone"], } };
-  request.send(JSON.stringify(postData))
+  if (img) {
 
+    console.log(img);
+
+    var request = new XMLHttpRequest();
+    request.open("POST", url);
+    request.addEventListener("load", function () {
+      var data = JSON.parse(this.responseText);
+      console.log(data);
+
+      sendMessage();
+    });
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    let postData = {
+      "content": text, 
+      "allowed_mentions": {
+        "users": [], "parse": ["users", "roles", "everyone"]
+      },
+      "embeds": [
+        {
+          "image": {
+            "url": "https://i.imgur.com/ZGPxFN2.jpg"
+          }
+        }
+      ]
+    };
+    request.send(JSON.stringify(postData));
+  } else {
+
+    var request = new XMLHttpRequest();
+    request.open("POST", url);
+    request.addEventListener("load", function () {
+      var data = JSON.parse(this.responseText);
+      console.log(data);
+
+      sendMessage()
+    });
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    let postData = { "content": text, "allowed_mentions": { "users": [], "parse": ["users", "roles", "everyone"], } };
+    request.send(JSON.stringify(postData));
+
+  }
   sendMessage(text);
 }
 
@@ -158,7 +200,7 @@ document.getElementById("message_input").addEventListener("keypress", function (
 
 document.getElementById("message_input").onpaste = function (event) {
   var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-  console.log(JSON.stringify(items)); // will give you the mime types
+  //console.log(JSON.stringify(items)); // will give you the mime types
   var self = this;
   for (index in items) {
     var item = items[index];
@@ -168,8 +210,10 @@ document.getElementById("message_input").onpaste = function (event) {
       reader.onload = function (event) {
         var image = new Image();
         image.src = event.target.result;
+        img = event.target.result;
+        //console.log(img);
         self.appendChild(image);
-        // console.log(event.target.result);
+        //console.log(event.target.result);
       }
       reader.readAsDataURL(blob);
     }
@@ -191,8 +235,9 @@ document.getElementById("url_input").addEventListener("keypress", function (e) {
     var arr = JSON.parse(localStorage.urls);
     arr.push(url);
     localStorage.urls = JSON.stringify(arr);
-    begin(url);
     this.innerText = "";
     document.getElementById("placeholder_url").hidden = false;
+    rel = true;
+    begin(url);
   }
 });
