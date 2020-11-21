@@ -137,31 +137,51 @@ function submit(text) {
 
   if (img) {
 
-    console.log(img);
+    var name = Math.random().toString();
 
-    var request = new XMLHttpRequest();
-    request.open("POST", url);
-    request.addEventListener("load", function () {
-      var data = JSON.parse(this.responseText);
-      console.log(data);
+    var blob = dataURItoBlob(img);
+    var raw = blob.arrayBuffer().then(buf => xhr.send(buf));
 
-      sendMessage();
-    });
-    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    let postData = {
-      "content": text, 
-      "allowed_mentions": {
-        "users": [], "parse": ["users", "roles", "everyone"]
-      },
-      "embeds": [
-        {
-          "image": {
-            "url": "https://i.imgur.com/ZGPxFN2.jpg"
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://cors-anywhere.herokuapp.com/https://dev.filebin.net/');
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.setRequestHeader('bin', 'harderbotonlinev2');
+    xhr.setRequestHeader('filename', name);
+
+    var image_url = "https://dev.filebin.net/harderbotonlinev2/" + name;
+
+    xhr.addEventListener("load", function () {
+      let data = JSON.parse(this.responseText);
+
+      var request = new XMLHttpRequest();
+      request.open("POST", url);
+      request.addEventListener("load", function () {
+        var data = JSON.parse(this.responseText);
+        console.log(data);
+
+        sendMessage();
+      });
+      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      let postData = {
+        "content": text,
+        "allowed_mentions": {
+          "users": [], "parse": ["users", "roles", "everyone"]
+        },
+        "embeds": [
+          {
+            "image": {
+              "url": image_url
+            }
           }
-        }
-      ]
-    };
-    request.send(JSON.stringify(postData));
+        ]
+      };
+      request.send(JSON.stringify(postData));
+    });
+
+    //var req = new XMLHttpRequest();
+   // req.open("POST", "https://cors-anywhere.herokuapp.com/https://dev.filebin.net/"")
+
+    //console.log(img);
   } else {
 
     var request = new XMLHttpRequest();
@@ -241,3 +261,32 @@ document.getElementById("url_input").addEventListener("keypress", function (e) {
     begin(url);
   }
 });
+
+
+// https://stackoverflow.com/questions/6850276/how-to-convert-dataurl-to-file-object-in-javascript
+function dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    //Old Code
+    //write the ArrayBuffer to a blob, and you're done
+    //var bb = new BlobBuilder();
+    //bb.append(ab);
+    //return bb.getBlob(mimeString);
+
+    //New Code
+    return new Blob([ab], {type: mimeString});
+
+
+}
