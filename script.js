@@ -1,5 +1,3 @@
-const API_KEY = "2e1f12e2389bc94cf979adea7146d52a"; // maybe don't make this plain text? Nah no one will see this
-
 var img = undefined;
 
 var rel = false;
