@@ -141,7 +141,7 @@ function submit(text) {
     var raw = blob.arrayBuffer().then(buf => xhr.send(buf));
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://cors-anywhere.herokuapp.com/https://dev.filebin.net/');
+    xhr.open('POST', 'https://dev.filebin.net/');
     xhr.setRequestHeader('Content-Type', 'application/octet-stream');
     xhr.setRequestHeader('bin', 'harderbotonlinev2');
     xhr.setRequestHeader('filename', name);
@@ -163,7 +163,7 @@ function submit(text) {
       let postData = {
         "content": text,
         "allowed_mentions": {
-          "users": [], "parse": ["users", "roles", "everyone"]
+          "users": [], "parse": ["users", "roles"]
         },
         "embeds": [
           {
@@ -191,7 +191,7 @@ function submit(text) {
       sendMessage()
     });
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    let postData = { "content": text, "allowed_mentions": { "users": [], "parse": ["users", "roles", "everyone"], } };
+    let postData = { "content": text, "allowed_mentions": { "users": [], "parse": ["users", "roles"], } };
     request.send(JSON.stringify(postData));
 
   }
