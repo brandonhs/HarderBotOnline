@@ -138,50 +138,35 @@ function submit(text) {
     var name = Math.random().toString();
 
     var blob = dataURItoBlob(img);
-    var raw = blob.arrayBuffer().then(buf => xhr.send(buf));
+    // var raw = blob.arrayBuffer().then(buf => xhr.send(buf));
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://dev.filebin.net/');
-    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-    xhr.setRequestHeader('bin', 'harderbotonlinev2');
-    xhr.setRequestHeader('filename', name);
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('POST', 'https://dev.filebin.net/');
+    // xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    // xhr.setRequestHeader('bin', 'harderbotonlinev2');
+    // xhr.setRequestHeader('filename', name);
 
-    var image_url = "https://dev.filebin.net/harderbotonlinev2/" + name;
+    // var image_url = "https://dev.filebin.net/harderbotonlinev2/" + name;
 
-    xhr.addEventListener("load", function () {
-      let data = JSON.parse(this.responseText);
-
-      var request = new XMLHttpRequest();
-      request.open("POST", url);
-      request.addEventListener("load", function () {
-        var data = JSON.parse(this.responseText);
-        console.log(data);
-
-        sendMessage();
-      });
-      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      let postData = {
-        "content": text,
-        "allowed_mentions": {
-          "users": [], "parse": ["users", "roles"]
-        },
-        "embeds": [
-          {
-            "image": {
-              "url": image_url
-            }
-          }
-        ]
-      };
-      request.send(JSON.stringify(postData));
+    var request = new XMLHttpRequest();
+    request.open("POST", url);
+    request.addEventListener("load", function () {
+      console.log(this.responseText);
+      sendMessage();
     });
-
-    //var req = new XMLHttpRequest();
-   // req.open("POST", "https://cors-anywhere.herokuapp.com/https://dev.filebin.net/"")
-
-    //console.log(img);
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    let postData = {
+      "content": text,
+      "allowed_mentions": {
+        "users": [], "parse": ["users", "roles"]
+      },
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      "file": blob
+    };
+    request.send(JSON.stringify(postData));
   } else {
-
     var request = new XMLHttpRequest();
     request.open("POST", url);
     request.addEventListener("load", function () {
